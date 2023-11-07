@@ -4,8 +4,11 @@ import java.awt.event.ActionEvent;
 import java.util.Random;
 
 public class ColorPaletteRandomizer extends JFrame {
+    private Color baseColor = null;
     private JPanel colorDisplayPanel;
     private JButton monoButton, anaButton, compButton, triadButton;
+    private Color selectedColor;
+    private boolean colorLocked = false;
 
     public ColorPaletteRandomizer() {
         setTitle("Color Palette Randomizer");
@@ -24,24 +27,38 @@ public class ColorPaletteRandomizer extends JFrame {
         anaButton = new JButton("Analogous");
         compButton = new JButton("Complementary");
         triadButton = new JButton("Triadic");
+        JButton colorWheelButton = new JButton("Choose Color");
+        JToggleButton lockColorButton = new JToggleButton("Lock Color");
 
         // Add action listeners to buttons
         monoButton.addActionListener((ActionEvent e) -> generateMonochromaticPalette());
         anaButton.addActionListener((ActionEvent e) -> generateAnalogousPalette());
         compButton.addActionListener((ActionEvent e) -> generateComplementaryPalette());
         triadButton.addActionListener((ActionEvent e) -> generateTriadicPalette());
+        lockColorButton.addActionListener((ActionEvent e) -> toggleLock());
 
         // Add buttons to the button panel
         buttonPanel.add(monoButton);
         buttonPanel.add(anaButton);
         buttonPanel.add(compButton);
         buttonPanel.add(triadButton);
+        buttonPanel.add(colorWheelButton);
+        buttonPanel.add(lockColorButton);
 
         // Add the button panel to the frame
         add(buttonPanel, BorderLayout.SOUTH);
 
         setVisible(true);
+        
+        colorWheelButton.addActionListener(e -> {
+            selectedColor = JColorChooser.showDialog(ColorPaletteRandomizer.this, "Choose a base color", Color.white);
+            if (selectedColor != null) {
+                baseColor = selectedColor;
+            }
+        });
     }
+
+
 
     private void generateMonochromaticPalette() {
         generatePalette(PaletteType.MONOCHROMATIC);
@@ -59,16 +76,35 @@ public class ColorPaletteRandomizer extends JFrame {
         generatePalette(PaletteType.TRIADIC);
     }
 
+    private void toggleLock() {
+        if (colorLocked == true) {
+            colorLocked = false;
+        } 
+        else {
+            colorLocked = true;
+        }
+    }
+
     private void generatePalette(PaletteType type) {
         colorDisplayPanel.removeAll();
 
-        // Generate a random base color
-        Random rand = new Random();
-        float hue = rand.nextFloat();
-        float baseSaturation = 0.5f + rand.nextFloat() * 0.5f; // More vivid colors
-        float baseBrightness = 0.7f + rand.nextFloat() * 0.3f; // Not too dark or too bright
-        Color baseColor = Color.getHSBColor(hue, baseSaturation, baseBrightness);
+        float hue;
+        float baseSaturation;
+        float baseBrightness;
 
+        if (baseColor !=null) {
+            float[] hsbValues = Color.RGBtoHSB(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), null);
+            hue = hsbValues[0];
+            baseSaturation = hsbValues[1];
+            baseBrightness = hsbValues[2];
+        } else {
+            Random rand = new Random();
+            hue = rand.nextFloat();
+            baseSaturation = 0.5f + rand.nextFloat() * 0.5f; // More vivid colors
+            baseBrightness = 0.7f + rand.nextFloat() * 0.3f; // Not too dark or too bright
+            baseColor = Color.getHSBColor(hue, baseSaturation, baseBrightness);
+        }
+                
         Color[] palette = new Color[5];
         palette[0] = baseColor; // The first color is always the base color
 
@@ -112,6 +148,12 @@ public class ColorPaletteRandomizer extends JFrame {
         // Update the display
         colorDisplayPanel.revalidate();
         colorDisplayPanel.repaint();
+
+
+        if (colorLocked == false) {
+            baseColor = null;
+        }
+        
     }
 
     private JPanel createColorPanel(Color color) {
