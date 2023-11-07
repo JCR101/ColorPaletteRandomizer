@@ -86,6 +86,11 @@ public class ColorPaletteRandomizer extends JFrame {
     }
 
     private void generatePalette(PaletteType type) {
+
+        if (colorLocked == false) {
+            baseColor = null;
+        }
+        
         colorDisplayPanel.removeAll();
 
         float hue;
@@ -148,11 +153,6 @@ public class ColorPaletteRandomizer extends JFrame {
         // Update the display
         colorDisplayPanel.revalidate();
         colorDisplayPanel.repaint();
-
-
-        if (colorLocked == false) {
-            baseColor = null;
-        }
         
     }
 
