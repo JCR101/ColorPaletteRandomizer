@@ -1,5 +1,4 @@
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -8,8 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.util.Random;
-
-
 
 public class ColorPaletteRandomizer extends JFrame {
     private Color baseColor = null;
@@ -25,7 +22,7 @@ public class ColorPaletteRandomizer extends JFrame {
         setLayout(new BorderLayout());
 
         colorDisplayPanel = new JPanel();
-        colorDisplayPanel.setLayout(new GridLayout(1, 5)); // To display five colors
+        colorDisplayPanel.setLayout(new GridLayout(1, 5)); 
         add(colorDisplayPanel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
@@ -66,8 +63,6 @@ public class ColorPaletteRandomizer extends JFrame {
         });
     }
 
-
-
     private void generateMonochromaticPalette() {
         generatePalette(PaletteType.MONOCHROMATIC);
     }
@@ -93,19 +88,11 @@ public class ColorPaletteRandomizer extends JFrame {
         }
     }
 
-    
-
     private String toHexString(Color color) {
         return String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
     }
 
-        // Method to get a contrasting color (white or black) depending on the brightness of the background
-    private Color getContrastingColor(Color color) {
-        double luminance = (0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue()) / 255;
-        return luminance > 0.5 ? Color.BLACK : Color.WHITE;
-    }
-
-    // Utility method to copy text to clipboard
+    // Method to copy text to clipboard
     private void CopyToClipboard(JTextField textField) {
         StringSelection stringSelection = new StringSelection(textField.getText());
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -113,13 +100,10 @@ public class ColorPaletteRandomizer extends JFrame {
     }
 
     private void generatePalette(PaletteType type) {
-
         if (colorLocked == false) {
             baseColor = null;
         }
-        
         colorDisplayPanel.removeAll();
-
         float hue;
         float baseSaturation;
         float baseBrightness;
@@ -132,15 +116,16 @@ public class ColorPaletteRandomizer extends JFrame {
         } else {
             Random rand = new Random();
             hue = rand.nextFloat();
-            baseSaturation = 0.5f + rand.nextFloat() * 0.5f; // More vivid colors
-            baseBrightness = 0.7f + rand.nextFloat() * 0.3f; // Not too dark or too bright
+            baseSaturation = 0.5f + rand.nextFloat() * 0.5f; 
+            baseBrightness = 0.7f + rand.nextFloat() * 0.3f; 
             baseColor = Color.getHSBColor(hue, baseSaturation, baseBrightness);
         }
                 
         Color[] palette = new Color[5];
-        palette[0] = baseColor; // The first color is always the base color
-
+        // The first color is always the base color
+        palette[0] = baseColor; 
         // Generate the palette based on the type
+
         switch (type) {
             case MONOCHROMATIC:
                 palette[1] = Color.getHSBColor(hue, Math.max(baseSaturation * 0.7f, 0.1f), Math.min(baseBrightness * 1.3f, 1.0f)); // Decrease saturation increase brightness
@@ -190,10 +175,7 @@ public class ColorPaletteRandomizer extends JFrame {
             hexField.setBorder(BorderFactory.createEmptyBorder());
             hexField.setHorizontalAlignment(JTextField.CENTER); // Center the text
 
-
-
-
-            // Add the mouse listener to select all text on click
+            // Add the mouse listener to select the color code on click
             hexField.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -201,7 +183,6 @@ public class ColorPaletteRandomizer extends JFrame {
                     String originalText = source.getText();
                     source.selectAll();
                     CopyToClipboard(source);
-
                     source.setText("Copied!");
                     new Timer(1000, new ActionListener() {
                         @Override
@@ -228,13 +209,6 @@ public class ColorPaletteRandomizer extends JFrame {
         colorDisplayPanel.revalidate();
         colorDisplayPanel.repaint();
         
-    }
-
-    private JPanel createColorPanel(Color color) {
-        JPanel panel = new JPanel();
-        panel.setBackground(color);
-        panel.setBorder(BorderFactory.createLineBorder(Color.black));
-        return panel;
     }
 
     // Define palette types
