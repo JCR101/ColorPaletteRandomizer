@@ -1,7 +1,15 @@
 import javax.swing.*;
+
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.util.Random;
+
+
 
 public class ColorPaletteRandomizer extends JFrame {
     private Color baseColor = null;
@@ -85,6 +93,25 @@ public class ColorPaletteRandomizer extends JFrame {
         }
     }
 
+    
+
+    private String toHexString(Color color) {
+        return String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
+    }
+
+        // Method to get a contrasting color (white or black) depending on the brightness of the background
+    private Color getContrastingColor(Color color) {
+        double luminance = (0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue()) / 255;
+        return luminance > 0.5 ? Color.BLACK : Color.WHITE;
+    }
+
+    // Utility method to copy text to clipboard
+    private void CopyToClipboard(JTextField textField) {
+        StringSelection stringSelection = new StringSelection(textField.getText());
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
+    }
+
     private void generatePalette(PaletteType type) {
 
         if (colorLocked == false) {
@@ -145,10 +172,57 @@ public class ColorPaletteRandomizer extends JFrame {
                 break;
         }
 
-        // Add colors to the display panel
-        for (Color color : palette) {
-            colorDisplayPanel.add(createColorPanel(color));
+        // Loop through the palette and create panels for each color
+        for (int i = 0; i < palette.length; i++) {
+            // Create a new panel for this color with a BoxLayout for vertical alignment
+            JPanel colorPanel = new JPanel();
+            colorPanel.setLayout(new BoxLayout(colorPanel, BoxLayout.Y_AXIS));
+
+            // Create the color display (a simple JPanel with a background color)
+            JPanel colorSwatch = new JPanel();
+            colorSwatch.setBackground(palette[i]);
+            colorSwatch.setPreferredSize(new Dimension(50, 500)); // Or whatever size you want
+
+            // Create the JTextField for the hex code
+            JTextField hexField = new JTextField(toHexString(palette[i]));
+            hexField.setEditable(false);
+            hexField.setFocusable(false);
+            hexField.setBorder(BorderFactory.createEmptyBorder());
+            hexField.setHorizontalAlignment(JTextField.CENTER); // Center the text
+
+
+
+
+            // Add the mouse listener to select all text on click
+            hexField.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    JTextField source = (JTextField) e.getSource();
+                    String originalText = source.getText();
+                    source.selectAll();
+                    CopyToClipboard(source);
+
+                    source.setText("Copied!");
+                    new Timer(1000, new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent evt) {
+                            source.setText(originalText);
+                        }
+                    }) {{
+                        setRepeats(false);
+                        start();
+                    }};
+                }
+            });
+
+            // Add the color swatch and hex field to the color panel
+            colorPanel.add(colorSwatch);
+            colorPanel.add(hexField);
+
+            // Add the color panel to the main display panel
+            colorDisplayPanel.add(colorPanel);
         }
+
 
         // Update the display
         colorDisplayPanel.revalidate();
