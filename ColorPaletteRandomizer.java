@@ -52,7 +52,6 @@ public class ColorPaletteRandomizer extends JFrame {
 
         // Add the button panel to the frame
         add(buttonPanel, BorderLayout.SOUTH);
-
         setVisible(true);
         
         colorWheelButton.addActionListener(e -> {
@@ -204,11 +203,9 @@ public class ColorPaletteRandomizer extends JFrame {
             colorDisplayPanel.add(colorPanel);
         }
 
-
         // Update the display
         colorDisplayPanel.revalidate();
         colorDisplayPanel.repaint();
-        
     }
 
     // Define palette types
