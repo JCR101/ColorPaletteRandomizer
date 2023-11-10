@@ -1,5 +1,4 @@
 # ColorPaletteRandomizer
-## Generates monochromatic, analogous, complementary and triadic color palettes. 
 
 Monochromatic - variations in lightness and saturation of a single color.
 
