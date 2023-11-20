@@ -133,10 +133,11 @@ public class ColorPaletteRandomizer extends JFrame {
                 palette[4] = Color.getHSBColor(hue, baseSaturation, Math.max(baseBrightness * 0.2f, 0.1f)); // Base saturation decreased brightness
                 break;
             case ANALOGOUS:
-                for (int i = 1; i < palette.length; i++) {
-                    float newHue = (hue + (i * 1/12f)) % 1.0f;
-                    palette[i] = Color.getHSBColor(newHue, baseSaturation, baseBrightness);
-                }
+                palette[0] = Color.getHSBColor((hue + (2 * -1/12f)) % 1.0f, baseSaturation, baseBrightness);
+                palette[1] = Color.getHSBColor((hue + (1 * -1/12f)) % 1.0f, baseSaturation, baseBrightness);
+                palette[2] = baseColor; 
+                palette[3] = Color.getHSBColor((hue + (1 * 1/12f)) % 1.0f, baseSaturation, baseBrightness);
+                palette[4] = Color.getHSBColor((hue + (2 * 1/12f)) % 1.0f, baseSaturation, baseBrightness);
                 break;
             case COMPLEMENTARY:
                 float complementaryHue = (hue + 0.5f) % 1.0f;
